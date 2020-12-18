@@ -12,21 +12,14 @@ fn main() {
 }
 
 fn part1(input: &String, (x, y): (usize, usize)) -> usize {
-	let mut current = 0;
 	return input.lines()
 		.step_by(y)
 		.enumerate()
-		.map(|l| -> Vec<char> {
-			l.1.chars().collect()
+		.filter_map(|(step, row)| match row.chars().nth((step * x) % row.len()) {
+			Some('.') => None,
+			s => s,
 		})
-		.map(|row| -> usize {
-			current += x;
-			if row[(current - x) % row.len()] == '#' {
-				return 1;
-			}
-			return 0;
-		})
-		.fold(0, |count, v| count + v);
+		.count();
 }
 
 fn part2(input: &String) -> usize {
