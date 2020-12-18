@@ -1,33 +1,64 @@
+use std::time::Instant;
+
 fn main() {
-	let mut data: Vec<&str> = vec!();
-
 	let input = std::fs::read_to_string("input.txt").unwrap();
-	input.lines().for_each(|l| data.push(l));
 
-	println!("Part 1 output: {}", part1(data));
+	let start = Instant::now();
+	println!("Part 1 output: {}", part1(&input));
+	println!("Part 1 time: {:?}", start.elapsed());
+	let start = Instant::now();
+	println!("Part 2 output: {}", part2(&input));
+	println!("Part 2 time: {:?}", start.elapsed());
 }
 
-fn part1(data: Vec<&str>) -> u32 {
-	let mut count = 0;
-	for l in data {
-		let pattern_data: Vec<&str> = l.split(": ").collect();
-		let pass = pattern_data[1];
-		let range_c: Vec<&str> = pattern_data[0].split(" ").collect();
-		let range: Vec<&str> = range_c[0].split("-").collect();
-		let test = range_c[1];
-		let min = range[0].parse().unwrap();
-		let max = range[1].parse().unwrap();
+fn part1(input: &String) -> usize {
+	return input
+		.lines()
+		.filter(|l| {
+			let (min, max, character, pass) = split(l);
 
-		let mut char_count = 0;
-		for c in pass.chars() {
-			if c == test.parse().unwrap() {
-				char_count += 1;
+			let count = pass.chars().filter(|c| *c == character).count();
+
+			return count >= min && count <= max;
+		})
+		.count();
+}
+
+fn part2(input: &String) -> usize {
+	return input
+		.lines()
+		.filter(|l| {
+			let (i0, i1, character, pass) = split(l);
+
+			let characters: Vec<char> = pass.chars().collect();
+
+			if characters[i0 - 1] == character {
+				return characters[i1 - 1] != character;
 			}
-		}
+			return characters[i1 - 1] == character;
+		})
+		.count();
+}
 
-		if char_count <= max && char_count >= min {
-			count += 1;
-		}
-	}
-	return count;
+fn split(line: &str) -> (usize, usize, char, &str) {
+	// Format of the given line: {min}-{max} {character}: {value}
+	let parts: Vec<&str> = line
+		.split_whitespace()
+		.collect();
+
+	let range: Vec<usize> = parts[0]
+		.split('-')
+		.map(|c| c.parse().unwrap())
+		.collect();
+	let min = range[0];
+	let max = range[1];
+
+	let character = parts[1]
+		.chars()
+		.nth(0)
+		.unwrap();
+
+	let value = parts[2];
+
+	return (min, max, character, value);
 }
