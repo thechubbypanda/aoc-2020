@@ -1,13 +1,15 @@
+use std::time::Instant;
+
 fn main() {
-	let mut data: Vec<u32> = vec!();
+	let input: Vec<u32> = std::fs::read_to_string("input.txt").unwrap().lines().map(|l| l.parse().unwrap()).collect();
 
-	std::fs::read_to_string("input.txt")
-		.unwrap()
-		.lines()
-		.for_each(|l| data.push(l.parse().unwrap()));
+	let timer = Instant::now();
+	println!("Part 1 output: {}", part1(&input).unwrap());
+	println!("Part 1 time: {:?}", timer.elapsed());
 
-	println!("Part 1 output: {}", part1(&data).unwrap());
-	println!("Part 2 output: {}", part2(&data).unwrap());
+	let timer = Instant::now();
+	println!("Part 2 output: {}", part2(&input).unwrap());
+	println!("Part 2 time: {:?}", timer.elapsed());
 }
 
 fn part1(input: &Vec<u32>) -> Result<u32, &'static str> {
