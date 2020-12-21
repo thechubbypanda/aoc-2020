@@ -14,25 +14,20 @@ fn main() {
 }
 
 fn part1(input: &Vec<&str>) -> usize {
-	input.iter().map(|group| {
-		let mut set: HashSet<char> = HashSet::new();
-		for l in group.lines() {
-			for c in l.chars() {
-				set.insert(c);
-			}
-		}
-		set.len()
-	}).fold(0, |a, v| a + v)
+	input.iter()
+		.map(|group| group.chars()
+			.filter(|c| !c.is_whitespace())
+			.collect::<HashSet<char>>()
+			.len()
+		)
+		.sum()
 }
 
 fn part2(input: &Vec<&str>) -> usize {
 	input.iter().map(|group| {
-		let mut set: HashSet<char> = HashSet::new();
-		for l in group.lines() {
-			for c in l.chars() {
-				set.insert(c);
-			}
-		}
+		let set = group.chars()
+			.filter(|c| !c.is_whitespace())
+			.collect::<HashSet<char>>();
 		set.iter()
 			.map(|c| {
 				group.lines()
@@ -41,5 +36,5 @@ fn part2(input: &Vec<&str>) -> usize {
 			})
             .filter(|v| *v)
             .count()
-	}).fold(0, |a, v| a + v)
+	}).sum()
 }
