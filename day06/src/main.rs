@@ -25,16 +25,15 @@ fn part1(input: &Vec<&str>) -> usize {
 
 fn part2(input: &Vec<&str>) -> usize {
 	input.iter().map(|group| {
-		let set = group.chars()
+		group.chars()
 			.filter(|c| !c.is_whitespace())
-			.collect::<HashSet<char>>();
-		set.iter()
+			.collect::<HashSet<char>>().iter()
 			.map(|c| {
 				group.lines()
 					.map(|l| l.contains(*c))
 					.fold(true, |a, v| a && v)
 			})
-            .filter(|v| *v)
-            .count()
+			.filter(|v| *v)
+			.count()
 	}).sum()
 }
