@@ -30,7 +30,7 @@ fn main() {
 }
 
 fn part1(input: &Vec<&str>) -> usize {
-	let mut set = HashMap::new();
+	let mut set = HashMap::new();:wq
 	for r in input.iter().map(|l| str_to_rule(l)) {
 		set.insert(r.color.clone(), r);
 	}
