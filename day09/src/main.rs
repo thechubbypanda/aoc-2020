@@ -1,4 +1,5 @@
 use std::time::Instant;
+use itertools::Itertools;
 
 const PREAMBLE: usize = 25;
 
@@ -12,25 +13,10 @@ fn main() {
 }
 
 fn part1(input: Vec<u64>) -> u64 {
-	'main: for (i, num) in input.iter().enumerate().skip(PREAMBLE) {
-		for (j, f) in input.iter()
-			.skip(i - PREAMBLE)
-			.take(PREAMBLE)
-			.filter_map(|v| if num >= v { Some(num - v)} else { None })
-			.enumerate() {
-			for (k, p) in input.iter()
-				.skip(i - PREAMBLE)
-				.take(PREAMBLE)
-				.enumerate() {
-				if j == k {
-					continue;
-				}
-				if f==*p {
-					continue 'main;
-				}
-			}
-		}
-		return *num;
-	}
-	panic!("None")
+	input.as_slice()
+		.windows(PREAMBLE + 1)
+		.find(|win| win[0..PREAMBLE].iter()
+			.tuple_combinations()
+			.all(|(a,b)| a + b != win[PREAMBLE])
+		).unwrap()[0]
 }
