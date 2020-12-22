@@ -18,5 +18,7 @@ fn part1(input: Vec<u64>) -> u64 {
 		.find(|win| win[0..PREAMBLE].iter()
 			.tuple_combinations()
 			.all(|(a,b)| a + b != win[PREAMBLE])
-		).unwrap()[0]
+		)
+		.map(|win| win[PREAMBLE])
+		.unwrap()
 }
