@@ -1,3 +1,5 @@
+#![feature(iter_advance_by)]
+
 use std::time::Instant;
 use itertools::Itertools;
 use std::collections::HashMap;
@@ -11,7 +13,7 @@ fn main() {
 	println!("Part 1 time: {:?}", timer.elapsed());
 	let timer = Instant::now();
 	println!("Part 2 output: {}", part2(adapters.clone()));
-	println!("Part 2 time: {:?}", timer.elapsed().as_secs_f64());
+	println!("Part 2 time: {:?}", timer.elapsed());
 }
 
 fn part1(input: Vec<u32>) -> u32 {
@@ -33,7 +35,35 @@ fn part1(input: Vec<u32>) -> u32 {
 }
 
 fn part2(input: Vec<u32>) -> usize {
-	dp(&input, 0, &mut HashMap::new())
+	input.iter()
+		.batching(|it| {
+			let mut temp = it.clone();
+			let mut last = &0;
+			if let Some(x) = temp.next() {
+				last = x;
+			} else {
+				return None;
+			}
+			let mut count = 1;
+			while let Some(next) = temp.next() {
+				if last + 1 == *next {
+					last = next;
+					count += 1;
+				}
+			}
+			if it.advance_by(count).is_err() {
+				panic!()
+			}
+			Some(count)
+		})
+		.map(|v| match v {
+			3 => 2,
+			4 => 4,
+			5 => 7,
+			_ => 1,
+		})
+		.product()
+	//dp(&input, 0, &mut HashMap::new())
 }
 
 fn dp(input: &Vec<u32>, start: usize, stored: &mut HashMap<usize, usize>) -> usize {
@@ -43,12 +73,15 @@ fn dp(input: &Vec<u32>, start: usize, stored: &mut HashMap<usize, usize>) -> usi
 	if let Some((_, v)) = stored.iter().find(|(i, _)| start == **i) {
 		return *v;
 	}
-	let mut ans = 0;
-	for i in (start+1)..input.len() {
-		if input[i] - input[start] <= 3 {
-			ans += dp(input, i, stored);
-		}
-	}
+	let ans = ((start + 1)..input.len())
+		.map(|i| {
+			if input[i] - input[start] <= 3 {
+				dp(input, i, stored)
+			} else {
+				0
+			}
+		})
+		.sum();
 	stored.insert(start, ans);
 	ans
 }
